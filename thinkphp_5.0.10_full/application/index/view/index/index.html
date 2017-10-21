@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/jquery-1.11.2.min.js"></script>
+</head>
+<script>
+    $(document).ready(function(){
+        province();
+        $("#province").change(function(){
+             $('#city').html(' <option>请选择</option>');
+            city();
+        });
+        $("#city").change(function(){
+             $('#area').html(' <option>请选择</option>');
+            area();
+        });
+    });
+
+
+    //获取省列表
+    function province() {
+        $.ajax(
+                {
+                    type: "post",
+                    url: "{:url('index/Index/select')}",
+                    data: { "type": "province" },
+                    dataType:"json",
+                    success: function (data) {
+//                         console.log(data);
+                        for (var i = 0; i < data.length; i++) {
+                            $("#province").append("<option value=" + data[i].provinceid + ">" + data[i].province + "</option>");
+//                            console.log(data[i]);
+                        }
+                    }
+                })
+    };
+    //根据省id获取市列表
+    function city() {
+        var provinceid = $("#province").val();
+//        console.log(provinceid);
+        $.ajax({
+            type: "post",
+            url: "{:url('index/Index/city')}",
+            data: {provinceid: provinceid},
+            dataType: "json",
+            success: function (data) {
+//                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    $("#city").append("<option value=" + data[i].cityid + ">" + data[i].city + "</option>");
+                }
+            }
+        });
+    }
+    //根据市id获取区列表
+    function area() {
+        var cityid = $("#city").val();
+//        console.log(cityid);
+        $.ajax({
+            type: "post",
+            url: "{:url('index/Index/areas')}",
+            data: {cityid: cityid},
+            dataType: "json",
+            success: function (data) {
+//                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    $("#area").append("<option>" + data[i].area + "</option>");
+                }
+            }
+        });
+    }
+</script>
+<body>
+    <!--省-->
+    省份：
+    <select id="province">
+        <option>请选择</option>
+    </select>
+   <!-- 市-->
+    城市：
+    <select id="city">
+        <option>请选择</option>
+    </select>
+    <!-- 区-->
+    区域：
+    <select id="area">
+        <option>请选择</option>
+    </select>
+</body>
+</html>
